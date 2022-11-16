@@ -1,11 +1,11 @@
 <template>
     <div class="navbar bg-base-100">
   <div class="flex-1">
-    <a class="btn btn-ghost normal-case text-xl">daisyUI</a>
+    <a class="btn btn-ghost normal-case text-xl">Factures</a>
   </div>
   <div class="flex-none gap-2">
-    <div class="form-control">
-      <input type="text" placeholder="Search" class="input input-bordered" />
+    <div class="form-control ">
+      <input type="text" placeholder="recherche" class="input input-bordered " />
     </div>
     <div class="dropdown dropdown-end">
       <label tabindex="0" class="btn btn-ghost btn-circle avatar">

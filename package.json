@@ -10,9 +10,11 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@formkit/vue": "1.0.0-beta.12-88f32c5",
     "@tauri-apps/api": "^1.1.0",
     "daisyui": "^2.39.1",
-    "vue": "^3.2.37"
+    "vue": "^3.2.37",
+    "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.1.0",
@@ -20,6 +22,7 @@
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.19",
     "tailwindcss": "^3.2.4",
-    "vite": "^3.0.2"
+    "vite": "^3.0.2",
+    "vite-plugin-pages": "^0.27.1"
   }
 }
