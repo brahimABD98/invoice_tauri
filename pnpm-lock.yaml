@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@formkit/utils': 1.0.0-beta.12
   '@formkit/vue': 1.0.0-beta.12-88f32c5
   '@tauri-apps/api': ^1.1.0
   '@tauri-apps/cli': ^1.1.0
@@ -15,6 +16,7 @@ specifiers:
   vue-router: ^4.1.6
 
 dependencies:
+  '@formkit/utils': 1.0.0-beta.12
   '@formkit/vue': 1.0.0-beta.12-88f32c5_ior6jr3fpijijuwpr34w2i25va
   '@tauri-apps/api': 1.2.0
   daisyui: 2.39.1_2lwn2upnx27dqeg6hqdu7sq75m
@@ -131,6 +133,10 @@ packages:
     dependencies:
       '@formkit/core': 1.0.0-beta.12-88f32c5
       tailwindcss: 3.2.4_postcss@8.4.19
+    dev: false
+
+  /@formkit/utils/1.0.0-beta.12:
+    resolution: {integrity: sha512-L2P221teC+58Y1A4TZpJsLt/Y+WErLxbBt4hH6XhokssVX7mYR56YWienY9StN5jmiGVWtcK1+riXCb0n1aMOA==}
     dev: false
 
   /@formkit/utils/1.0.0-beta.12-88f32c5:

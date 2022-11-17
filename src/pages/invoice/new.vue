@@ -1,18 +1,20 @@
-<script >
+<script setup >
 import { ref } from 'vue'
-export default {
-  setup() {
-    // const submitted = ref(false)
+import { token } from '@formkit/utils'
 
-    const value = ref();
-    const invoicelines = ref([])
-    const invoiceline = ref()
-    // console.log(value.value)
-    return {
-      value, invoicelines, invoiceline
-    }
-  }
+// const submitted = ref(false)
+
+const value = ref();
+const invoicelines = ref([])
+const invoiceline = ref()
+const items = ref([token()])
+// console.log(value.value)
+const addItem = () => {
+  items.value.push(token())
 }
+
+
+
 
 
 </script>
@@ -36,10 +38,11 @@ export default {
         :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
       <FormKit type="number" name="taux" label="taux tva global" validation="required" min="1" max="100" />
 
+      <div class="divider"></div>
 
 
       <FormKit name="invoicelines" v-model="invoicelines" type="list">
-        <FormKit type="group" name="invoiceline" v-model="invoiceline">
+        <FormKit type="group" name="invoiceline" v-model="invoiceline" v-for="item in items ">
 
           <FormKit type="text" name="produit" label="Produit" validation="required" />
           <FormKit type="number" name="qte" label="quantite" validation="required" min="1" value="1" />
@@ -50,8 +53,15 @@ export default {
           <FormKit type="text" name="ttc" label="ttc"
             :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
           <FormKit type="number" name="taux" label="taux tva" validation="required" value="20" />
+
+          <div class="divider"></div>
         </FormKit>
+
+
       </FormKit>
+
+      <button type="button" @click.prevent="addItem">+ Add Email</button>
+
 
       <FormKit type="submit" label="Register" />
       <pre wrap>{{ value }}</pre>
