@@ -11,4 +11,12 @@ const router = createRouter({
 })
 
 
-createApp(App).use(router).use(plugin, defaultConfig).mount("#app");
+createApp(App).use(router).use(plugin, defaultConfig({
+    // theme:"genesis",
+    config:{
+        classes:{
+            label:"label-text",
+            // input:"input input-bordered input-warning w-full max-w-xs"
+        }
+    }
+})).mount("#app");
