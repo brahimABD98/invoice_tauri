@@ -1,26 +1,35 @@
 <script setup >
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { token } from '@formkit/utils'
-
-// const submitted = ref(false)
+import { invoke } from "@tauri-apps/api/tauri";
 
 const value = ref();
 const invoicelines = ref([])
 const invoiceline = ref()
+const invoice = ref("");
 const items = ref([token()])
-// console.log(value.value)
 const addItem = () => {
   items.value.push(token())
 }
+const removeItem = (item) => {
+  items.value.pop(item)
 
+}
+async function newInvoice() {
 
+  invoice.value = await invoke('new_invoice').catch(e => console.log(e));
 
+}
+onMounted(() => {
+  newInvoice();
+})
 
 
 </script>
 
 <template>
   <div>
+
     <p class="text-3xl">Ajouter une facture</p>
     <hr class="my-5" />
     <div class="mt-5">
@@ -104,5 +113,9 @@ const addItem = () => {
       </form>
     </div>
 
+
   </div>
 </template>
+<style>
+
+</style>
