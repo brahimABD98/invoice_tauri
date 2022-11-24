@@ -1,4 +1,6 @@
-#[derive(Debug, Default)]
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize,Deserialize, Debug)]
 pub struct Invoiceline {
     pub produit: String,
     pub qte: u16,
@@ -7,7 +9,17 @@ pub struct Invoiceline {
     pub ttc: f32,
     taux: f32,
 }
-
+impl Default for Invoiceline {
+    fn default() -> Self {
+        Self{produit: "".to_owned(),
+        qte: 1,
+        puht: 0.0,
+        tva: 0.0,
+        taux: 25.0,
+        ttc: 0.0,} 
+    }
+    
+}
 impl Invoiceline {
     pub fn new() -> Self {
         Self {
@@ -15,7 +27,6 @@ impl Invoiceline {
             qte: 1,
             puht: 0.0,
             tva: 0.0,
-
             taux: 20.0,
             ttc: 0.0,
         }
@@ -33,7 +44,7 @@ impl Invoiceline {
         }
         return self.tva;
     }
-    
+
     fn get_puht(&mut self) -> f32 {
         if self.puht == 0.0 {
             self.tva = self.get_tva();

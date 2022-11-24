@@ -1,12 +1,13 @@
 <script setup >
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { token } from '@formkit/utils'
+import { invoke } from "@tauri-apps/api/tauri";
 
 const value = ref();
 const invoicelines = ref([])
 const invoiceline = ref()
+const invoice = ref("");
 const items = ref([token()])
-// console.log(value.value)
 const addItem = () => {
   items.value.push(token())
 }
@@ -14,6 +15,15 @@ const removeItem = (item) => {
   items.value.pop(item)
 
 }
+async function newInvoice() {
+
+  invoice.value = await invoke('new_invoice').catch(e => console.log(e));
+
+}
+onMounted(() => {
+  newInvoice();
+})
+
 
 </script>
 
@@ -32,7 +42,7 @@ const removeItem = (item) => {
           <FormKit type="number" name="number" input-class="w-32 input input-bordered input-info" label="Facutre numero"
             min="1" />
           <div class="mx-3"></div>
-          <FormKit type="text" name="Client" input-class="w-32 input input-bordered input-info"
+          <FormKit type="text" name="client" input-class="w-32 input input-bordered input-info"
             label="tapez le nom de votre client" placeholder="Jane Doe" help="" validation="required" />
           <div class="mx-3"></div>
           <FormKit type="date" name="date" input-class="w-38  input input-bordered input-info" label="date"
@@ -61,7 +71,7 @@ const removeItem = (item) => {
             </thead>
             <!-- body -->
             <tbody>
-              <FormKit name="invoicelines" v-model="invoicelines" type="list">
+              <FormKit name="invoicelinelist" v-model="invoicelines" type="list">
                 <FormKit type="group" name="invoiceline" v-model="invoiceline" v-for="item in items ">
                   <tr>
                     <th>
@@ -83,13 +93,13 @@ const removeItem = (item) => {
                     <td>
                       <div class="flex items-center ">
                         <FormKit type="number" name="qte" validation="required"
-                          input-class="w-24 input input-bordered input-info" min="1" value="1" />
+                          input-class="w-24 input input-bordered input-info" min="1" />
                       </div>
                     </td>
                     <td>
                       <div class="flex items-center">
                         <FormKit type="number" name="taux" placeholder="taux tva"
-                          input-class="w-24 input input-bordered input-info" validation="required" value="20" />
+                          input-class="w-24 input input-bordered input-info" validation="required" />
                       </div>
                     </td>
                     <td>
@@ -133,12 +143,16 @@ const removeItem = (item) => {
           <FormKit type="text" name="timbre" label="timbre"
             :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]"
             input-class="w-32 input input-bordered input-info" />
-          <FormKit type="number" name="taux" label="taux tva global" validation="required" min="1" max="100" value="20"
+          <FormKit type="number" name="taux" label="taux tva global" validation="required" min="1" max="100"
             input-class="w-32 input input-bordered input-info" />
         </div>
         <div class="divider"></div>
         <!-- <FormKit type="submit" label="Register" /> -->
+
         <pre wrap>{{ value }}</pre>
+        <div class="divider"></div
+          >
+
       </div>
     </FormKit>
 

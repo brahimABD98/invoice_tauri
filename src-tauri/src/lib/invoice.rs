@@ -1,5 +1,10 @@
+use serde::{Serialize, Deserialize};
+
 use crate::lib::invoiceline::Invoiceline;
-#[derive(Debug, Default)]
+
+use super::invoiceline;
+#[derive(Serialize,Deserialize, Debug)]
+#[derive(Default)]
 pub struct Invoice {
     pub client: String,
     pub date: String,
@@ -13,7 +18,7 @@ pub struct Invoice {
     pub invoicelinelist: Vec<Invoiceline>,
 }
 impl Invoice {
-    fn make() -> Self {
+  pub  fn make() -> Self {
         Self {
             client: "".to_owned(),
             date: "".to_owned(),
@@ -23,10 +28,10 @@ impl Invoice {
             timbre: 0.6,
             number: 1,
             taux: 0.0,
-            invoicelinelist: Default::default(),
+            invoicelinelist:vec![Invoiceline::default()],
         }
     }
-    fn new(
+   pub fn new(
         _client: String,
         _date: String,
         _ttc: f32,
