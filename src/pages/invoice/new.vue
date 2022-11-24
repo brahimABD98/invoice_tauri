@@ -29,132 +29,90 @@ onMounted(() => {
 
 <template>
   <div>
-    <FormKit type="form" name="Invoice" id="registration-example" submit-label="Register" #default="{ value }">
-      <div class="flex flex-col">
-        <h1>Facutre!</h1>
-        <p>
-          Remplissez les champs selon vos besoins
-        </p>
-        <hr />
 
-        <div class="flex flex-row my-5 items-center   ">
+    <p class="text-3xl">Ajouter une facture</p>
+    <hr class="my-5" />
+    <div class="mt-5">
+      <form>
+        <div class="flex flex-col">
+          <div class="flex flex-row mx-3 ">
+            <div class="form-control ">
+              <label class="label">
+                <span class="label-text text-xl ">N°</span>
+              </label>
+              <input type="text" placeholder="#" value="1" class="input input-bordered input-info w-full max-w-xs" />
+            </div>
+            <div class="form-control mx-3">
+              <label class="label">
+                <span class="label-text text-xl">Client</span>
+              </label>
+              <input type="text" placeholder="" class="input input-bordered input-info w-full max-w-xs" />
+            </div>
+            <div class="form-control mx-3">
+              <label class="label">
+                <span class="label-text text-xl">date</span>
+              </label>
+              <input type="date" placeholder="" class="input input-bordered input-info w-full max-w-xs" />
+            </div>
 
-          <FormKit type="number" name="number" input-class="w-32 input input-bordered input-info" label="Facutre numero"
-            min="1" />
-          <div class="mx-3"></div>
-          <FormKit type="text" name="client" input-class="w-32 input input-bordered input-info"
-            label="tapez le nom de votre client" placeholder="Jane Doe" help="" validation="required" />
-          <div class="mx-3"></div>
-          <FormKit type="date" name="date" input-class="w-38  input input-bordered input-info" label="date"
-            placeholder="" help="" validation="required" />
-
-        </div>
-
-        <div class="overflow-x-auto w-full ">
-          <table class="table w-full">
-            <!-- head -->
-            <thead>
-              <tr>
-                <th>
-                  <label>
-                    <input type="checkbox" class="checkbox" />
-                  </label>
-                </th>
-                <th></th>
-                <th>Produit</th>
-                <th>quantité</th>
-                <th>taux tva</th>
-                <th>prix unitaire hors tva</th>
-                <th>tva</th>
-                <th>ttc</th>
-              </tr>
-            </thead>
-            <!-- body -->
-            <tbody>
-              <FormKit name="invoicelinelist" v-model="invoicelines" type="list">
-                <FormKit type="group" name="invoiceline" v-model="invoiceline" v-for="item in items ">
+          </div>
+          <div class="mt-5">
+            <div class="overflow-x-auto w-auto">
+              <table class="table w-auto">
+                <!-- head -->
+                <thead>
                   <tr>
-                    <th>
+                    <!-- <th>
                       <label>
                         <input type="checkbox" class="checkbox" />
                       </label>
-                    </th>
-                    <td>
-                      <div class="flex items-center">
-                        <button class="btn btn-outline btn-error" @click="removeItem(item)">supprimer</button>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="flex items-center ">
-                        <FormKit type="text" name="produit" placeholder="produit"
-                          input-class="w-42 input input-bordered input-info" validation="required" />
-                      </div>
-                    </td>
-                    <td>
-                      <div class="flex items-center ">
-                        <FormKit type="number" name="qte" validation="required"
-                          input-class="w-24 input input-bordered input-info" min="1" />
-                      </div>
-                    </td>
-                    <td>
-                      <div class="flex items-center">
-                        <FormKit type="number" name="taux" placeholder="taux tva"
-                          input-class="w-24 input input-bordered input-info" validation="required" />
-                      </div>
-                    </td>
-                    <td>
-                      <div class="flex items-center ">
-                        <FormKit type="text" name="htva" input-class="w-32 input input-bordered input-info"
-                          :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
-                      </div>
-                    </td>
-                    <td>
-                      <div class="flex items-center ">
-                        <FormKit type="text" name="tva" input-class="w-28 input input-bordered input-info"
-                          :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
-                      </div>
-                    </td>
-                    <td>
-                      <div class="flex items-center ">
-                        <FormKit type="text" name="ttc" input-class="w-28 input input-bordered input-info"
-                          :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
-                      </div>
-                    </td>
+                    </th> -->
+                    <th>Produit </th>
+                    <th>Job</th>
+                    <th>Favorite Color</th>
+                    <th></th>
+                    <th></th>
                   </tr>
-                </FormKit>
-              </FormKit>
-            </tbody>
-            <!-- end body -->
-            <!-- foot -->
-            <tfoot>
-              <tr>
-                <td>
-                  <button type="button" @click.prevent="addItem">+ Add Email</button>
-                </td>
-              </tr>
-            </tfoot>
-            <!-- end foot -->
-          </table>
-        </div>
-        <div class="items-end mt-5">
-          <FormKit type="text" name="htva" label="total hors tva"
-            :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]"
-            input-class="w-32 input input-bordered input-info" />
-          <FormKit type="text" name="timbre" label="timbre"
-            :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]"
-            input-class="w-32 input input-bordered input-info" />
-          <FormKit type="number" name="taux" label="taux tva global" validation="required" min="1" max="100"
-            input-class="w-32 input input-bordered input-info" />
-        </div>
-        <div class="divider"></div>
-        <!-- <FormKit type="submit" label="Register" /> -->
+                </thead>
+                <tbody>
+                  <!-- row 1 -->
+                  <tr>
+                    <!-- <th>
+                      <label>
+                        <input type="checkbox" class="checkbox" />
+                      </label>
+                    </th> -->
+                    <td>
+                      <div class="flex items-center space-x-3">
 
-        <pre wrap>{{ value }}</pre>
-        <div class="divider"></div
-          >
+                        <div>
+                          <input type="text" placeholder="produit" class="input input-bordered w-auto border-emerald-50" />
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      Zemlak, Daniel and Leannon
+                      <br />
+                      <span class="badge badge-ghost badge-sm">Desktop Support Technician</span>
+                    </td>
+                    <td>Purple</td>
+                    <th>
+                      <button class="btn btn-ghost btn-xs">details</button>
+                    </th>
+                  </tr>
 
-      </div>
-    </FormKit>
+                </tbody>
+                <!-- foot -->
+
+
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
 
   </div>
 </template>
