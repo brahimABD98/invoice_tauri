@@ -1,28 +1,27 @@
-<script setup >
+<script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { token } from '@formkit/utils'
 import { invoke } from "@tauri-apps/api/tauri";
 
-const value = ref();
-const invoicelines = ref([])
-const invoiceline = ref()
-const invoice = ref("");
-const items = ref([token()])
-const addItem = () => {
-  items.value.push(token())
-}
-const removeItem = (item) => {
-  items.value.pop(item)
+// const value = ref();
+// const invoicelines = ref([])
+// const invoiceline = ref()
+// const invoice = ref("");
+// const items = ref([token()])
+// const addItem = () => {
+//   items.value.push(token())
+// }
+// const removeItem = (item) => {
+//   items.value.pop(item)
 
-}
-async function newInvoice() {
+// }
+// async function newInvoice() {
 
-  invoice.value = await invoke('new_invoice').catch(e => console.log(e));
+//   invoice.value = await invoke('new_invoice').catch(e => console.log(e));
 
-}
-onMounted(() => {
-  newInvoice();
-})
+// }
+// onMounted(() => {
+//   newInvoice();
+// })
 
 
 </script>
@@ -40,7 +39,7 @@ onMounted(() => {
               <label class="label">
                 <span class="label-text text-xl ">N°</span>
               </label>
-              <input type="text" placeholder="#" v-model="invoice.taux" class="input input-bordered input-info w-full max-w-xs" />
+              <!-- <input type="text" placeholder="#" v-model="invoice.taux" class="input input-bordered input-info w-full max-w-xs" /> -->
             </div>
             <div class="form-control mx-3">
               <label class="label">
@@ -113,7 +112,7 @@ onMounted(() => {
       </form>
     </div>
 
-    <pre wrap>{{invoice}}</pre>
+    <!-- <pre wrap>{{invoice}}</pre> -->
   </div>
 </template>
 <style>
