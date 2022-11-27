@@ -40,7 +40,7 @@ onMounted(() => {
               <label class="label">
                 <span class="label-text text-xl ">N°</span>
               </label>
-              <input type="text" placeholder="#" value="1" class="input input-bordered input-info w-full max-w-xs" />
+              <input type="text" placeholder="#" v-model="invoice.taux" class="input input-bordered input-info w-full max-w-xs" />
             </div>
             <div class="form-control mx-3">
               <label class="label">
@@ -113,7 +113,7 @@ onMounted(() => {
       </form>
     </div>
 
-
+    <pre wrap>{{invoice}}</pre>
   </div>
 </template>
 <style>

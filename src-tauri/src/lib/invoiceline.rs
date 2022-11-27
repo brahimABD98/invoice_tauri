@@ -1,6 +1,8 @@
 use serde::{Serialize, Deserialize};
+use ts_rs::TS;
 
-#[derive(Serialize,Deserialize, Debug)]
+#[derive(Serialize,Deserialize,TS, Debug)]
+#[ts(export,export_to="../src/bindings/invoiceline.ts")]
 pub struct Invoiceline {
     pub produit: String,
     pub qte: u16,

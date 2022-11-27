@@ -1,9 +1,12 @@
 use serde::{Serialize, Deserialize};
+use ts_rs::TS;
 
 use crate::lib::invoiceline::Invoiceline;
 
-use super::invoiceline;
-#[derive(Serialize,Deserialize, Debug)]
+
+#[derive(Serialize,Deserialize,TS, Debug)]
+#[ts(export,export_to="../src/bindings/invoice.ts")]
+
 #[derive(Default)]
 pub struct Invoice {
     pub client: String,
