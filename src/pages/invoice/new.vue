@@ -1,26 +1,27 @@
 <script setup >
-import { onMounted, ref } from 'vue'
-import { token } from '@formkit/utils'
+import { onBeforeMount, onMounted, ref } from 'vue'
 import { invoke } from "@tauri-apps/api/tauri";
 
-const value = ref();
-const invoicelines = ref([])
-const invoiceline = ref()
-const invoice = ref("");
-const items = ref([token()])
-const addItem = () => {
-  items.value.push(token())
-}
-const removeItem = (item) => {
-  items.value.pop(item)
-
-}
+const invoice = ref()
 async function newInvoice() {
-
-  invoice.value = await invoke('new_invoice').catch(e => console.log(e));
-
+  await invoke('new_invoice').then((res) => {
+    switch (typeof (res)) {
+      case "string":
+        return invoice.value = JSON.parse(res)
+    }
+  })
 }
-onMounted(() => {
+
+async function resolve() {
+  let i = JSON.stringify(invoice.value)
+  await invoke('resolve_invoice', { invoice: i }).then((res) => {
+    switch (typeof (res)) {
+      case "string":
+        return invoice.value = JSON.parse(res);
+    }
+  }).catch((error) => error);
+}
+onBeforeMount(() => {
   newInvoice();
 })
 
@@ -29,7 +30,7 @@ onMounted(() => {
 
 <template>
   <div>
-
+    <button @click="resolve()" class="btn btn-primary">call resolve</button>
     <p class="text-3xl">Ajouter une facture</p>
     <hr class="my-5" />
     <div class="mt-5">
@@ -40,7 +41,8 @@ onMounted(() => {
               <label class="label">
                 <span class="label-text text-xl ">N°</span>
               </label>
-              <input type="text" placeholder="#" v-model="invoice.taux" class="input input-bordered input-info w-full max-w-xs" />
+              <input type="text" placeholder="#" v-if="invoice" v-model="invoice.ttc"
+                class="input input-bordered input-info w-full max-w-xs" />
             </div>
             <div class="form-control mx-3">
               <label class="label">
@@ -86,7 +88,8 @@ onMounted(() => {
                       <div class="flex items-center space-x-3">
 
                         <div>
-                          <input type="text" placeholder="produit" class="input input-bordered w-auto border-emerald-50" />
+                          <input type="text" placeholder="produit"
+                            class="input input-bordered w-auto border-emerald-50" />
                         </div>
                       </div>
                     </td>
@@ -113,7 +116,7 @@ onMounted(() => {
       </form>
     </div>
 
-    <pre wrap>{{invoice}}</pre>
+    <pre wrap>{{ invoice }}</pre>
   </div>
 </template>
 <style>

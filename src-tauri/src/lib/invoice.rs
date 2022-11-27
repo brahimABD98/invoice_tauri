@@ -30,7 +30,7 @@ impl Invoice {
             tva: 0.0,
             timbre: 0.6,
             number: 1,
-            taux: 0.0,
+            taux: 20.0,
             invoicelinelist:vec![Invoiceline::default()],
         }
     }

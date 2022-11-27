@@ -17,7 +17,7 @@ impl Default for Invoiceline {
         qte: 1,
         puht: 0.0,
         tva: 0.0,
-        taux: 25.0,
+        taux: 20.0,
         ttc: 0.0,} 
     }
     
