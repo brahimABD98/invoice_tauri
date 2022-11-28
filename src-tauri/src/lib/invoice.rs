@@ -1,12 +1,10 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
 use crate::lib::invoiceline::Invoiceline;
 
-
-#[derive(Serialize,Deserialize,TS, Debug)]
-#[ts(export,export_to="../src/bindings/invoice.ts")]
-
+#[derive(Serialize, Deserialize, TS, Debug)]
+#[ts(export, export_to = "../src/bindings/invoice.ts")]
 #[derive(Default)]
 pub struct Invoice {
     pub client: String,
@@ -21,7 +19,7 @@ pub struct Invoice {
     pub invoicelinelist: Vec<Invoiceline>,
 }
 impl Invoice {
-  pub  fn make() -> Self {
+    pub fn make() -> Self {
         Self {
             client: "".to_owned(),
             date: "".to_owned(),
@@ -31,10 +29,10 @@ impl Invoice {
             timbre: 0.6,
             number: 1,
             taux: 20.0,
-            invoicelinelist:vec![Invoiceline::default()],
+            invoicelinelist: vec![Invoiceline::default()],
         }
     }
-   pub fn new(
+    pub fn new(
         _client: String,
         _date: String,
         _ttc: f32,
@@ -105,6 +103,10 @@ impl Invoice {
         return self.htva;
     }
     pub fn resolve(&mut self) {
+        self.invoicelinelist
+            .iter_mut()
+            .for_each(|invoiceline| invoiceline.resolve());
+
         self.ttc = self.get_ttc();
         self.tva = self.get_tva();
         self.htva = self.get_htva();

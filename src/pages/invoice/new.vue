@@ -3,6 +3,7 @@ import { onBeforeMount, onMounted, ref } from 'vue'
 import { invoke } from "@tauri-apps/api/tauri";
 
 const invoice = ref()
+const resolvedinvoice=ref()
 async function newInvoice() {
   await invoke('new_invoice').then((res) => {
     switch (typeof (res)) {
@@ -15,9 +16,10 @@ async function newInvoice() {
 async function resolve() {
   let i = JSON.stringify(invoice.value)
   await invoke('resolve_invoice', { invoice: i }).then((res) => {
+    console.log(res);
     switch (typeof (res)) {
       case "string":
-        return invoice.value = JSON.parse(res);
+        return resolvedinvoice.value = JSON.parse(res);
     }
   }).catch((error) => error);
 }
@@ -41,7 +43,7 @@ onBeforeMount(() => {
               <label class="label">
                 <span class="label-text text-xl ">N°</span>
               </label>
-              <input type="text" placeholder="#" v-if="invoice" v-model="invoice.ttc"
+              <input type="number" placeholder="#" v-if="invoice" v-model="invoice.ttc"
                 class="input input-bordered input-info w-full max-w-xs" />
             </div>
             <div class="form-control mx-3">
@@ -116,7 +118,7 @@ onBeforeMount(() => {
       </form>
     </div>
 
-    <pre wrap>{{ invoice }}</pre>
+    <pre wrap>{{ resolvedinvoice }}</pre>
   </div>
 </template>
 <style>
