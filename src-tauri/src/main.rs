@@ -30,10 +30,11 @@ fn resolve_invoice(invoice: String) -> String {
             let str = response.unwrap();
             return str;
         } else {
-            return "error serilize response".to_owned();
+            return "error seriliazing response".to_owned();
         }
+    } else {
+        return "error deserialize".to_owned();
     }
-    return "error deserialize".to_owned();
 }
 
 fn main() {

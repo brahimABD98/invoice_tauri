@@ -55,17 +55,17 @@ impl Invoice {
             invoicelinelist: _invoiceline,
         }
     }
-    fn get_tva(&mut self) -> f32 {
+    pub fn get_tva(&mut self) -> f32 {
         if self.tva == 0.0 {
+            if self.ttc > 0.0 {
+                return ((self.ttc - self.timbre) * 100.0 * self.taux)
+                    / ((100.0 + self.taux) * 100.0);
+            }
             if self.invoicelinelist.len() > 0 {
                 return self
                     .invoicelinelist
                     .iter()
                     .fold(0.0, |acc, currentvalue| currentvalue.tva + acc);
-            }
-            if self.ttc > 0.0 {
-                return ((self.ttc - self.timbre) * 100.0 * self.taux)
-                    / ((100.0 + self.taux) * 100.0);
             }
         }
         return self.tva;
@@ -85,8 +85,10 @@ impl Invoice {
         return self.ttc;
     }
     fn get_htva(&mut self) -> f32 {
-        if self.htva > 0.0 {
-            return self.htva;
+        self.tva = self.get_tva();
+        self.ttc = self.get_ttc();
+        if self.tva > 0.0 && self.ttc > 0.0 {
+            return (self.ttc - self.timbre) - self.tva;
         }
 
         if self.invoicelinelist.len() > 0 {
@@ -94,18 +96,14 @@ impl Invoice {
                 (currentvalue.puht * currentvalue.qte as f32) + acc
             });
         }
-        self.tva = self.get_tva();
-        self.ttc = self.get_ttc();
-        if self.tva > 0.0 && self.ttc > 0.0 {
-            return (self.ttc - self.timbre) - self.tva;
-        }
+
         // }
         return self.htva;
     }
     pub fn resolve(&mut self) {
-        self.invoicelinelist
-            .iter_mut()
-            .for_each(|invoiceline| invoiceline.resolve());
+        // self.invoicelinelist
+        //     .iter_mut()
+        //     .for_each(|invoiceline| invoiceline.resolve());
 
         self.ttc = self.get_ttc();
         self.tva = self.get_tva();
