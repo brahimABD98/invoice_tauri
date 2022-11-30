@@ -4,7 +4,7 @@
 )]
 use std::io::Write;
 
-use lib::invoice::Invoice;
+use lib::{invoice::Invoice, invoiceline::Invoiceline};
 
 mod lib;
 
@@ -17,6 +17,14 @@ fn greet(name: &str) -> String {
 #[tauri::command]
 fn new_invoice() -> String {
     return serde_json::to_string(&Invoice::make()).unwrap();
+}
+#[tauri::command]
+fn new_invoice_line() -> String {
+    match serde_json::to_string(&Invoiceline::new()) {
+        Ok(str) => return str,
+        Err(error) => return error.to_string(),
+    }
+
 }
 #[tauri::command]
 fn resolve_invoice(invoice: String) -> String {
@@ -42,7 +50,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             greet,
             new_invoice,
-            resolve_invoice
+            resolve_invoice,
+            new_invoice_line
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

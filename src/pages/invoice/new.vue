@@ -3,7 +3,8 @@ import { onBeforeMount, onMounted, ref } from 'vue'
 import { invoke } from "@tauri-apps/api/tauri";
 
 const invoice = ref()
-const resolvedinvoice=ref()
+const resolvedinvoice = ref()
+const empty_line = ref();
 async function newInvoice() {
   await invoke('new_invoice').then((res) => {
     switch (typeof (res)) {
@@ -27,7 +28,15 @@ onBeforeMount(() => {
   newInvoice();
 })
 
+async function addnewInvoiceline() {
+  await invoke('new_invoice_line').then((res) => {
+    switch (typeof (res)) {
+      case "string":
+        invoice.value.invoicelinelist.push(res)
 
+    }
+  }).catch((e)=>console.log(e))
+}
 </script>
 
 <template>
@@ -43,20 +52,22 @@ onBeforeMount(() => {
               <label class="label">
                 <span class="label-text text-xl ">N°</span>
               </label>
-              <input type="number" placeholder="#" v-if="invoice" v-model="invoice.ttc"
+              <input type="number" placeholder="#" v-if="invoice" v-model="invoice.number"
                 class="input input-bordered input-info w-full max-w-xs" />
             </div>
             <div class="form-control mx-3">
               <label class="label">
                 <span class="label-text text-xl">Client</span>
               </label>
-              <input type="text" placeholder="" class="input input-bordered input-info w-full max-w-xs" />
+              <input type="text" placeholder="" v-if="invoice" v-model="invoice.client"
+                class="input input-bordered input-info w-full max-w-xs" />
             </div>
             <div class="form-control mx-3">
               <label class="label">
                 <span class="label-text text-xl">date</span>
               </label>
-              <input type="date" placeholder="" class="input input-bordered input-info w-full max-w-xs" />
+              <input type="date" placeholder="" v-if="invoice" v-model="invoice.date"
+                class="input input-bordered input-info w-full max-w-xs" />
             </div>
 
           </div>
@@ -66,49 +77,87 @@ onBeforeMount(() => {
                 <!-- head -->
                 <thead>
                   <tr>
-                    <!-- <th>
+                    <th>
                       <label>
                         <input type="checkbox" class="checkbox" />
                       </label>
-                    </th> -->
+                    </th>
                     <th>Produit </th>
-                    <th>Job</th>
-                    <th>Favorite Color</th>
-                    <th></th>
-                    <th></th>
+                    <th>quantite</th>
+                    <th>taux</th>
+                    <th>prix hors tva</th>
+                    <th>TVA</th>
+                    <th>TTC</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody v-if="invoice" v-for="item in invoice.invoicelinelist">
                   <!-- row 1 -->
                   <tr>
-                    <!-- <th>
+                    <th>
                       <label>
                         <input type="checkbox" class="checkbox" />
                       </label>
-                    </th> -->
+                    </th>
                     <td>
                       <div class="flex items-center space-x-3">
-
                         <div>
-                          <input type="text" placeholder="produit"
-                            class="input input-bordered w-auto border-emerald-50" />
+                          <input type="text" placeholder="produit" v-if="invoice" v-model="item.produit"
+                            class="input input-bordered w-38 border-emerald-50" />
                         </div>
                       </div>
                     </td>
                     <td>
-                      Zemlak, Daniel and Leannon
-                      <br />
-                      <span class="badge badge-ghost badge-sm">Desktop Support Technician</span>
+                      <div class="flex items-center space-x-3">
+                        <div>
+                          <input type="number" v-if="invoice" v-model="item.qte" placeholder="quantite"
+                            class="input input-bordered w-24 border-emerald-50" />
+                        </div>
+                      </div>
                     </td>
-                    <td>Purple</td>
-                    <th>
-                      <button class="btn btn-ghost btn-xs">details</button>
-                    </th>
+                    <td>
+                      <div class="flex items-center space-x-3">
+                        <div>
+                          <input type="number" v-if="invoice" v-model="item.taux" placeholder="taux"
+                            class="input input-bordered w-24 border-emerald-50" />
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="flex items-center space-x-3">
+                        <div>
+                          <input type="number" v-if="invoice" v-model="item.htva" placeholder="htva"
+                            class="input input-bordered w-38 border-emerald-50" />
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="flex items-center space-x-3">
+                        <div>
+                          <input type="number" v-if="invoice" v-model="item.tva" placeholder="tva"
+                            class="input input-bordered w-38 border-emerald-50" />
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="flex items-center space-x-3">
+                        <div>
+                          <input type="number" v-if="invoice" v-model="item.ttc" placeholder="ttc"
+                            class="input input-bordered  w-24 border-emerald-50" />
+                        </div>
+                      </div>
+                    </td>
                   </tr>
 
                 </tbody>
                 <!-- foot -->
-
+                <tfoot>
+                  <tr>
+                    <td>
+                      <button type="button" v-if="invoice" @click.prevent="addnewInvoiceline()">+ Add
+                        Email</button>
+                    </td>
+                  </tr>
+                </tfoot>
 
               </table>
             </div>
