@@ -1,9 +1,10 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
 use crate::lib::invoiceline::Invoiceline;
 
-use super::invoiceline;
-#[derive(Serialize,Deserialize, Debug)]
+#[derive(Serialize, Deserialize, TS, Debug)]
+#[ts(export, export_to = "../src/bindings/invoice.ts")]
 #[derive(Default)]
 pub struct Invoice {
     pub client: String,
@@ -18,7 +19,7 @@ pub struct Invoice {
     pub invoicelinelist: Vec<Invoiceline>,
 }
 impl Invoice {
-  pub  fn make() -> Self {
+    pub fn make() -> Self {
         Self {
             client: "".to_owned(),
             date: "".to_owned(),
@@ -27,11 +28,11 @@ impl Invoice {
             tva: 0.0,
             timbre: 0.6,
             number: 1,
-            taux: 0.0,
-            invoicelinelist:vec![Invoiceline::default()],
+            taux: 20.0,
+            invoicelinelist: vec![Invoiceline::default()],
         }
     }
-   pub fn new(
+    pub fn new(
         _client: String,
         _date: String,
         _ttc: f32,
@@ -54,17 +55,17 @@ impl Invoice {
             invoicelinelist: _invoiceline,
         }
     }
-    fn get_tva(&mut self) -> f32 {
+    pub fn get_tva(&mut self) -> f32 {
         if self.tva == 0.0 {
+            if self.ttc > 0.0 {
+                return ((self.ttc - self.timbre) * 100.0 * self.taux)
+                    / ((100.0 + self.taux) * 100.0);
+            }
             if self.invoicelinelist.len() > 0 {
                 return self
                     .invoicelinelist
                     .iter()
                     .fold(0.0, |acc, currentvalue| currentvalue.tva + acc);
-            }
-            if self.ttc > 0.0 {
-                return ((self.ttc - self.timbre) * 100.0 * self.taux)
-                    / ((100.0 + self.taux) * 100.0);
             }
         }
         return self.tva;
@@ -84,8 +85,10 @@ impl Invoice {
         return self.ttc;
     }
     fn get_htva(&mut self) -> f32 {
-        if self.htva > 0.0 {
-            return self.htva;
+        self.tva = self.get_tva();
+        self.ttc = self.get_ttc();
+        if self.tva > 0.0 && self.ttc > 0.0 {
+            return (self.ttc - self.timbre) - self.tva;
         }
 
         if self.invoicelinelist.len() > 0 {
@@ -93,15 +96,15 @@ impl Invoice {
                 (currentvalue.puht * currentvalue.qte as f32) + acc
             });
         }
-        self.tva = self.get_tva();
-        self.ttc = self.get_ttc();
-        if self.tva > 0.0 && self.ttc > 0.0 {
-            return (self.ttc - self.timbre) - self.tva;
-        }
+
         // }
         return self.htva;
     }
     pub fn resolve(&mut self) {
+        // self.invoicelinelist
+        //     .iter_mut()
+        //     .for_each(|invoiceline| invoiceline.resolve());
+
         self.ttc = self.get_ttc();
         self.tva = self.get_tva();
         self.htva = self.get_htva();

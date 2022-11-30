@@ -1,78 +1,97 @@
 <script setup >
-import { onMounted, ref } from 'vue'
-import { token } from '@formkit/utils'
+import { onBeforeMount, onMounted, ref } from 'vue'
 import { invoke } from "@tauri-apps/api/tauri";
 
-const value = ref();
-const invoicelines = ref([])
-const invoiceline = ref()
-const invoice = ref("");
-const items = ref([token()])
-const addItem = () => {
-  items.value.push(token())
-}
-const removeItem = (item) => {
-  items.value.pop(item)
-
-}
+const invoice = ref()
+const resolvedinvoice = ref()
+const empty_line = ref();
 async function newInvoice() {
-
-  invoice.value = await invoke('new_invoice').catch(e => console.log(e));
-
+  await invoke('new_invoice').then((res) => {
+    switch (typeof (res)) {
+      case "string":
+        return invoice.value = JSON.parse(res)
+    }
+  })
 }
-onMounted(() => {
+
+async function resolve() {
+  let i = JSON.stringify(invoice.value)
+  await invoke('resolve_invoice', { invoice: i }).then((res) => {
+    console.log(res);
+    switch (typeof (res)) {
+      case "string":
+        return resolvedinvoice.value = JSON.parse(res);
+    }
+  }).catch((error) => error);
+}
+onBeforeMount(() => {
   newInvoice();
 })
 
+async function addnewInvoiceline() {
+  await invoke('new_invoice_line').then((res) => {
+    switch (typeof (res)) {
+      case "string":
+        invoice.value.invoicelinelist.push(res)
 
+    }
+  }).catch((e)=>console.log(e))
+}
 </script>
 
 <template>
   <div>
-    <FormKit type="form" name="Invoice" id="registration-example" submit-label="Register" #default="{ value }">
-      <div class="flex flex-col">
-        <h1>Facutre!</h1>
-        <p>
-          Remplissez les champs selon vos besoins
-        </p>
-        <hr />
+    <button @click="resolve()" class="btn btn-primary">call resolve</button>
+    <p class="text-3xl">Ajouter une facture</p>
+    <hr class="my-5" />
+    <div class="mt-5">
+      <form>
+        <div class="flex flex-col">
+          <div class="flex flex-row mx-3 ">
+            <div class="form-control ">
+              <label class="label">
+                <span class="label-text text-xl ">N°</span>
+              </label>
+              <input type="number" placeholder="#" v-if="invoice" v-model="invoice.number"
+                class="input input-bordered input-info w-full max-w-xs" />
+            </div>
+            <div class="form-control mx-3">
+              <label class="label">
+                <span class="label-text text-xl">Client</span>
+              </label>
+              <input type="text" placeholder="" v-if="invoice" v-model="invoice.client"
+                class="input input-bordered input-info w-full max-w-xs" />
+            </div>
+            <div class="form-control mx-3">
+              <label class="label">
+                <span class="label-text text-xl">date</span>
+              </label>
+              <input type="date" placeholder="" v-if="invoice" v-model="invoice.date"
+                class="input input-bordered input-info w-full max-w-xs" />
+            </div>
 
-        <div class="flex flex-row my-5 items-center   ">
-
-          <FormKit type="number" name="number" input-class="w-32 input input-bordered input-info" label="Facutre numero"
-            min="1" />
-          <div class="mx-3"></div>
-          <FormKit type="text" name="client" input-class="w-32 input input-bordered input-info"
-            label="tapez le nom de votre client" placeholder="Jane Doe" help="" validation="required" />
-          <div class="mx-3"></div>
-          <FormKit type="date" name="date" input-class="w-38  input input-bordered input-info" label="date"
-            placeholder="" help="" validation="required" />
-
-        </div>
-
-        <div class="overflow-x-auto w-full ">
-          <table class="table w-full">
-            <!-- head -->
-            <thead>
-              <tr>
-                <th>
-                  <label>
-                    <input type="checkbox" class="checkbox" />
-                  </label>
-                </th>
-                <th></th>
-                <th>Produit</th>
-                <th>quantité</th>
-                <th>taux tva</th>
-                <th>prix unitaire hors tva</th>
-                <th>tva</th>
-                <th>ttc</th>
-              </tr>
-            </thead>
-            <!-- body -->
-            <tbody>
-              <FormKit name="invoicelinelist" v-model="invoicelines" type="list">
-                <FormKit type="group" name="invoiceline" v-model="invoiceline" v-for="item in items ">
+          </div>
+          <div class="mt-5">
+            <div class="overflow-x-auto w-auto">
+              <table class="table w-auto">
+                <!-- head -->
+                <thead>
+                  <tr>
+                    <th>
+                      <label>
+                        <input type="checkbox" class="checkbox" />
+                      </label>
+                    </th>
+                    <th>Produit </th>
+                    <th>quantite</th>
+                    <th>taux</th>
+                    <th>prix hors tva</th>
+                    <th>TVA</th>
+                    <th>TTC</th>
+                  </tr>
+                </thead>
+                <tbody v-if="invoice" v-for="item in invoice.invoicelinelist">
+                  <!-- row 1 -->
                   <tr>
                     <th>
                       <label>
@@ -80,82 +99,75 @@ onMounted(() => {
                       </label>
                     </th>
                     <td>
-                      <div class="flex items-center">
-                        <button class="btn btn-outline btn-error" @click="removeItem(item)">supprimer</button>
+                      <div class="flex items-center space-x-3">
+                        <div>
+                          <input type="text" placeholder="produit" v-if="invoice" v-model="item.produit"
+                            class="input input-bordered w-38 border-emerald-50" />
+                        </div>
                       </div>
                     </td>
                     <td>
-                      <div class="flex items-center ">
-                        <FormKit type="text" name="produit" placeholder="produit"
-                          input-class="w-42 input input-bordered input-info" validation="required" />
+                      <div class="flex items-center space-x-3">
+                        <div>
+                          <input type="number" v-if="invoice" v-model="item.qte" placeholder="quantite"
+                            class="input input-bordered w-24 border-emerald-50" />
+                        </div>
                       </div>
                     </td>
                     <td>
-                      <div class="flex items-center ">
-                        <FormKit type="number" name="qte" validation="required"
-                          input-class="w-24 input input-bordered input-info" min="1" />
+                      <div class="flex items-center space-x-3">
+                        <div>
+                          <input type="number" v-if="invoice" v-model="item.taux" placeholder="taux"
+                            class="input input-bordered w-24 border-emerald-50" />
+                        </div>
                       </div>
                     </td>
                     <td>
-                      <div class="flex items-center">
-                        <FormKit type="number" name="taux" placeholder="taux tva"
-                          input-class="w-24 input input-bordered input-info" validation="required" />
+                      <div class="flex items-center space-x-3">
+                        <div>
+                          <input type="number" v-if="invoice" v-model="item.htva" placeholder="htva"
+                            class="input input-bordered w-38 border-emerald-50" />
+                        </div>
                       </div>
                     </td>
                     <td>
-                      <div class="flex items-center ">
-                        <FormKit type="text" name="htva" input-class="w-32 input input-bordered input-info"
-                          :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
+                      <div class="flex items-center space-x-3">
+                        <div>
+                          <input type="number" v-if="invoice" v-model="item.tva" placeholder="tva"
+                            class="input input-bordered w-38 border-emerald-50" />
+                        </div>
                       </div>
                     </td>
                     <td>
-                      <div class="flex items-center ">
-                        <FormKit type="text" name="tva" input-class="w-28 input input-bordered input-info"
-                          :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
-                      </div>
-                    </td>
-                    <td>
-                      <div class="flex items-center ">
-                        <FormKit type="text" name="ttc" input-class="w-28 input input-bordered input-info"
-                          :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
+                      <div class="flex items-center space-x-3">
+                        <div>
+                          <input type="number" v-if="invoice" v-model="item.ttc" placeholder="ttc"
+                            class="input input-bordered  w-24 border-emerald-50" />
+                        </div>
                       </div>
                     </td>
                   </tr>
-                </FormKit>
-              </FormKit>
-            </tbody>
-            <!-- end body -->
-            <!-- foot -->
-            <tfoot>
-              <tr>
-                <td>
-                  <button type="button" @click.prevent="addItem">+ Add Email</button>
-                </td>
-              </tr>
-            </tfoot>
-            <!-- end foot -->
-          </table>
+
+                </tbody>
+                <!-- foot -->
+                <tfoot>
+                  <tr>
+                    <td>
+                      <button type="button" v-if="invoice" @click.prevent="addnewInvoiceline()">+ Add
+                        Email</button>
+                    </td>
+                  </tr>
+                </tfoot>
+
+              </table>
+            </div>
+          </div>
         </div>
-        <div class="items-end mt-5">
-          <FormKit type="text" name="htva" label="total hors tva"
-            :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]"
-            input-class="w-32 input input-bordered input-info" />
-          <FormKit type="text" name="timbre" label="timbre"
-            :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]"
-            input-class="w-32 input input-bordered input-info" />
-          <FormKit type="number" name="taux" label="taux tva global" validation="required" min="1" max="100"
-            input-class="w-32 input input-bordered input-info" />
-        </div>
-        <div class="divider"></div>
-        <!-- <FormKit type="submit" label="Register" /> -->
 
-        <pre wrap>{{ value }}</pre>
-        <div class="divider"></div
-          >
+      </form>
+    </div>
 
-      </div>
-    </FormKit>
-
+    <pre wrap>{{ resolvedinvoice }}</pre>
   </div>
 </template>
 <style>

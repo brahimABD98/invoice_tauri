@@ -1,6 +1,8 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
-#[derive(Serialize,Deserialize, Debug)]
+#[derive(Serialize, Deserialize, TS, Debug)]
+#[ts(export, export_to = "../src/bindings/invoiceline.ts")]
 pub struct Invoiceline {
     pub produit: String,
     pub qte: u16,
@@ -11,14 +13,15 @@ pub struct Invoiceline {
 }
 impl Default for Invoiceline {
     fn default() -> Self {
-        Self{produit: "".to_owned(),
-        qte: 1,
-        puht: 0.0,
-        tva: 0.0,
-        taux: 25.0,
-        ttc: 0.0,} 
+        Self {
+            produit: "".to_owned(),
+            qte: 1,
+            puht: 0.0,
+            tva: 0.0,
+            taux: 20.0,
+            ttc: 0.0,
+        }
     }
-    
 }
 impl Invoiceline {
     pub fn new() -> Self {
@@ -67,5 +70,6 @@ impl Invoiceline {
         self.puht = self.get_puht();
         self.tva = self.get_tva();
         self.ttc = self.get_ttc();
+        
     }
 }
