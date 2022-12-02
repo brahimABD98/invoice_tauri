@@ -3,6 +3,15 @@ use ts_rs::TS;
 
 use crate::lib::invoiceline::Invoiceline;
 
+struct Date;
+impl Date {
+    pub fn today() -> String {
+        let d = chrono::Local::now().date_naive();
+        let d = format!("{}", d.format("%d-%m-%y"));
+        return d;
+    }
+}
+
 #[derive(Serialize, Deserialize, TS, Debug)]
 #[ts(export, export_to = "../src/bindings/invoice.ts")]
 #[derive(Default)]
@@ -22,7 +31,7 @@ impl Invoice {
     pub fn make() -> Self {
         Self {
             client: "".to_owned(),
-            date: "".to_owned(),
+            date: Date::today(),
             ttc: 0.0,
             htva: 0.0,
             tva: 0.0,
