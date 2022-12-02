@@ -54,7 +54,7 @@ onBeforeMount(() => {
           <FormKit type="text" name="client" v-model="invoice.client" input-class="w-32 input input-bordered input-info"
             label="tapez le nom de votre client" placeholder="Jane Doe" help="" validation="required" />
           <div class="mx-3"></div>
-          <FormKit type="date" name="date" input-class="w-38  input input-bordered input-info" label="date"
+          <FormKit type="date" name="date" v-model="invoice.date" input-class="w-38  input input-bordered input-info" label="date"
             placeholder="" help="" validation="required" />
 
         </div>
@@ -117,21 +117,21 @@ onBeforeMount(() => {
                       <div class="flex items-center ">
                         <FormKit type="text" v-model="invoiceline.puht" name="htva"
                           input-class="w-32 input input-bordered input-info"
-                          :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
+                          :validation="[['matches', /^(?:[0-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
                       </div>
                     </td>
                     <td>
                       <div class="flex items-center ">
                         <FormKit type="text" name="tva" v-model="invoiceline.tva"
                           input-class="w-28 input input-bordered input-info"
-                          :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
+                          :validation="[['matches', /^(?:[0-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
                       </div>
                     </td>
                     <td>
                       <div class="flex items-center ">
                         <FormKit type="text" name="ttc" v-model="invoiceline.ttc"
                           input-class="w-28 input input-bordered input-info"
-                          :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
+                          :validation="[['matches', /^(?:[0-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]" />
                       </div>
                     </td>
                   </tr>
@@ -140,7 +140,7 @@ onBeforeMount(() => {
             </tbody>
             <!-- end body -->
             <!-- foot -->
-            <tfoot>
+            <tfoot >
               <tr>
                 <td>
                   <button type="button" @click.prevent="addItem">+ Add Email</button>
@@ -151,13 +151,13 @@ onBeforeMount(() => {
           </table>
         </div>
         <div class="items-end mt-5">
-          <FormKit type="text" name="htva" label="total hors tva"
+          <FormKit v-model="invoice.htva" type="text" name="htva" label="total hors tva"
             :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]"
             input-class="w-32 input input-bordered input-info" />
-          <FormKit type="text" name="timbre" label="timbre"
+          <FormKit type="text" name="timbre" label="timbre" v-model="invoice.timbre"
             :validation="[['matches', /^(?:[1-9]\d*|0(?!(?:\.0+)?$))?(?:\.\d+)?$/]]"
             input-class="w-32 input input-bordered input-info" />
-          <FormKit type="number" name="taux" label="taux tva global" validation="required" min="1" max="100"
+          <FormKit type="number" name="taux" label="taux tva global" v-model="invoice.taux" validation="required" min="1" max="100"
             input-class="w-32 input input-bordered input-info" />
         </div>
         <div class="divider"></div>
