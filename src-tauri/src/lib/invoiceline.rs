@@ -70,6 +70,5 @@ impl Invoiceline {
         self.puht = self.get_puht();
         self.tva = self.get_tva();
         self.ttc = self.get_ttc();
-        
     }
 }

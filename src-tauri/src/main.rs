@@ -24,7 +24,6 @@ fn new_invoice_line() -> String {
         Ok(str) => return str,
         Err(error) => return error.to_string(),
     }
-
 }
 #[tauri::command]
 fn resolve_invoice(invoice: String) -> String {

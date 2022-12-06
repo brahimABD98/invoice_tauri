@@ -1,20 +1,20 @@
 {
-    "client": "",
-    "date": "",
-    "htva": 0.0,
-    "tva": 0.0,
-    "timbre": 0.6,
-    "number": 1,
-    "taux": 20.0,
-    "ttc": 5555.0,
-    "invoicelinelist": [
-        {
-            "produit": "",
-            "qte": 1,
-            "puht": 0.0,
-            "tva": 0.0,
-            "ttc": 0.0,
-            "taux": 20.0
-        }
-    ]
+  "client": "",
+  "date": "",
+  "htva": 0.0,
+  "tva": 0.0,
+  "timbre": 0.6,
+  "number": 1,
+  "taux": 20.0,
+  "ttc": 5555.0,
+  "invoicelinelist": [
+    {
+      "produit": "",
+      "qte": 1,
+      "puht": 0.0,
+      "tva": 0.0,
+      "ttc": 0.0,
+      "taux": 20.0
+    }
+  ]
 }
