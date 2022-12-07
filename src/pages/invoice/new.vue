@@ -6,7 +6,7 @@ const invoice = ref();
 
 async function reso() {
   const str = JSON.stringify(invoice.value);
-  console.log("str" + str);
+  
   await invoke("resolve_invoice", { invoice: str })
     .then((res) => {
       invoice.value = JSON.parse(res);
