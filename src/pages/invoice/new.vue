@@ -1,9 +1,12 @@
 <script setup >
-import { onBeforeMount, ref } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import { invoke } from "@tauri-apps/api/tauri";
 
 const invoice = ref();
 
+const invoicelines = computed(() => {
+  return invoice.value.invoicelinelist;
+})
 async function reso() {
 
   const str = JSON.stringify(invoice.value);
@@ -92,9 +95,9 @@ onBeforeMount(() => {
               </tr>
             </thead>
             <!-- body -->
-            <tbody>
-              <FormKit name="invoicelinelist" type="list" v-if="invoice">
-                <FormKit type="group" name="invoiceline" v-for="invoiceline in invoice.invoicelinelist ">
+            <tbody v-if="invoice">
+              <FormKit name="invoicelinelist" type="list" v-if="invoicelines">
+                <FormKit type="group" name="invoiceline" v-for="invoiceline in invoicelines ">
 
                   <tr>
                     <th>
