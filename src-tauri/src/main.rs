@@ -2,7 +2,7 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-use std::io::Write;
+use std::{fmt::Error, io::Write};
 
 use lib::{invoice::Invoice, invoiceline::Invoiceline};
 
@@ -24,25 +24,36 @@ fn new_invoice_line() -> String {
         Ok(str) => return str,
         Err(error) => return error.to_string(),
     }
-
 }
 #[tauri::command]
 fn resolve_invoice(invoice: String) -> String {
-    let res = serde_json::from_str(&invoice);
-    if res.is_ok() {
-        let mut invoice: Invoice = res.unwrap();
-        invoice.resolve();
+    let res: Result<Invoice, serde_json::Error> = serde_json::from_str(&invoice);
 
-        let response = serde_json::to_string(&invoice);
-        if response.is_ok() {
-            let str = response.unwrap();
-            return str;
-        } else {
-            return "error seriliazing response".to_owned();
+    match res {
+        Ok(mut iv) => {
+            iv.resolve();
+            match serde_json::to_string(&iv) {
+                Ok(str) => return str,
+                Err(e) => e.to_string(),
+            }
         }
-    } else {
-        return "error deserialize".to_owned();
+        Err(e) => e.to_string(),
     }
+
+    // if res.is_ok() {
+    //     let mut invoice: Invoice = res.unwrap();
+    //     invoice.resolve();
+
+    //     let response = serde_json::to_string(&invoice);
+    //     if response.is_ok() {
+    //         let str = response.unwrap();
+    //         return str;
+    //     } else {
+    //         return "error seriliazing response".to_owned();
+    //     }
+    // } else {
+    //      panic!("{:?}",invoice);
+    // }
 }
 
 fn main() {
