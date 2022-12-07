@@ -10,7 +10,7 @@ const invoicelines = computed(() => {
 async function reso() {
 
   const str = JSON.stringify(invoice.value);
-  console.log("str" + str);
+  // console.log("str" + str);
   await invoke('resolve_invoice', { invoice: str }).then((res) => {
 
     invoice.value = JSON.parse(res)
@@ -97,7 +97,7 @@ onBeforeMount(() => {
             <!-- body -->
             <tbody v-if="invoice">
               <FormKit name="invoicelinelist" type="list" v-if="invoicelines">
-                <FormKit type="group" name="invoiceline" v-for="invoiceline in invoicelines ">
+                <FormKit type="group" name="invoiceline" :key="invoiceline.produit" v-for="invoiceline in invoicelines ">
 
                   <tr>
                     <th>
