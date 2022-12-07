@@ -28,14 +28,15 @@ fn new_invoice_line() -> String {
 #[tauri::command]
 fn resolve_invoice(invoice: String) -> String {
     let res: Result<Invoice, serde_json::Error> = serde_json::from_str(&invoice);
-   
+
     match res {
         Ok(mut iv) => {
             iv.resolve();
             match serde_json::to_string(&iv) {
-            Ok(str) => return str,
-            Err(e) => e.to_string(),
-        }},
+                Ok(str) => return str,
+                Err(e) => e.to_string(),
+            }
+        }
         Err(e) => e.to_string(),
     }
 
