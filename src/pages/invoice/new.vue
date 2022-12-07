@@ -9,7 +9,6 @@ const invoicelines = computed(() => {
 });
 async function reso() {
   const str = JSON.stringify(invoice.value);
-<<<<<<< HEAD
   // console.log("str" + str);
   await invoke('resolve_invoice', { invoice: str }).then((res) => {
 
