@@ -1,3 +1,4 @@
+use round::{round, round_up};
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
@@ -6,10 +7,10 @@ use ts_rs::TS;
 pub struct Invoiceline {
     pub produit: String,
     pub qte: u16,
-    pub puht: f32,
-    pub tva: f32,
-    pub ttc: f32,
-    taux: f32,
+    pub puht: f64,
+    pub tva: f64,
+    pub ttc: f64,
+    taux: f64,
 }
 impl Default for Invoiceline {
     fn default() -> Self {
@@ -35,41 +36,66 @@ impl Invoiceline {
         }
     }
 
-    fn get_tva(&mut self) -> f32 {
-        if self.tva == 0.0 {
-            if self.puht > 0.0 && self.ttc == 0.0 {
-                return (self.puht * self.qte as f32 * self.taux) / 100.0;
-            }
-
-            if self.puht == 0.0 && self.ttc > 0.0 {
-                return (self.ttc * 100.0 * self.taux) / ((100.0 + self.taux) * 100.0);
-            }
+    fn get_tva(&self) -> f64 {
+        if self.tva > 0.0 {
+            return self.tva;
         }
+        if self.tva < 0.0 {
+            return 0.0;
+        }
+
+        if self.puht > 0.0 {
+            return ((self.puht * self.qte as f64) * self.taux) / 100.0;
+        }
+        if self.ttc > 0.0 {
+            return (self.ttc * 100.0 * self.taux) / ((100.0 + self.taux) * 100.0);
+        }
+
         return self.tva;
     }
 
-    fn get_puht(&mut self) -> f32 {
-        if self.puht == 0.0 {
-            self.tva = self.get_tva();
-            return (self.ttc / self.qte as f32) - self.tva;
+    fn get_puht(&self) -> f64 {
+        if self.puht > 0.0 {
+            return self.puht;
         }
+        if self.puht < 0.0 {
+            return 0.0;
+        }
+
+        if self.ttc > 0.0 {
+            return (self.ttc / self.qte as f64) + (1.0 + (self.taux / 100.0));
+        }
+        if self.tva > 0.0 {
+            return ((self.tva * 100.0) / self.taux) / self.qte as f64;
+        }
+
         return self.puht;
     }
-    fn get_ttc(&mut self) -> f32 {
-        if self.ttc == 0.0 {
-            self.tva = self.get_tva();
-            self.puht = self.get_puht();
-            return (self.puht * self.qte as f32) + self.tva;
+
+    //get tout taxe compris
+    fn get_ttc(&self) -> f64 {
+        if self.ttc > 0.0 {
+            return self.ttc;
         }
+        if self.ttc < 0.0 {
+            return 0.0;
+        }
+
+        if self.puht > 0.0 {
+            return self.puht * self.qte as f64 + self.puht * self.qte as f64 * self.taux / 100.0;
+        }
+        if self.tva > 0.0 {
+            return self.tva / (1.0 - (1.0 / (1.0 + self.taux as f64)));
+        }
+
         return self.ttc;
     }
-    pub fn get_taux(self) -> f32 {
+    pub fn get_taux(&self) -> f64 {
         self.taux
     }
     pub fn resolve(&mut self) {
-        self.puht = self.get_puht();
-        self.tva = self.get_tva();
-        self.ttc = self.get_ttc();
-        
+        self.puht = round_up(self.get_puht(), 3);
+        self.tva = round(self.get_tva(), 3);
+        self.ttc = round(self.get_ttc(), 3);
     }
 }

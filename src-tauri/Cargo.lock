@@ -1275,6 +1275,7 @@ name = "invoice"
 version = "0.0.0"
 dependencies = [
  "chrono",
+ "round",
  "serde",
  "serde_json",
  "tauri",
@@ -2288,6 +2289,12 @@ dependencies = [
  "web-sys",
  "windows 0.37.0",
 ]
+
+[[package]]
+name = "round"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b02705db4fa872ae37e464fc803b7ffa574e6c4a5e112c52a82550f9dd63b657"
 
 [[package]]
 name = "rustc_version"
