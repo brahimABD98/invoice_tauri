@@ -23,7 +23,7 @@ const castNumber = (node) => {
 
 const addItem = async () => {
   const newinvoiceline = await newInvoiceLine().catch(
-    (error) => "error:" + error
+    (error) => "error:" + error,
   );
   invoice.value.invoicelinelist.push(newinvoiceline);
 };
@@ -34,7 +34,7 @@ const removeItem = (item) => {
 
 async function newInvoiceLine() {
   const res = await invoke("new_invoice_line").catch(
-    (error) => "error:" + error
+    (error) => "error:" + error,
   );
   return JSON.parse(res);
 }
